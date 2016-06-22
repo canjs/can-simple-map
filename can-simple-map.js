@@ -3,7 +3,7 @@ var canBatch = require("can-event/batch/batch");
 var canEvent = require("can-event");
 var assign = require("can-util/js/assign/assign");
 var types = require("can-util/js/types/types");
-var ObserveInfo = require("can-observe-info");
+var Observation = require("can-observation");
 
 // this is a very simple can-map like object
 var SimpleMap = Construct.extend({
@@ -26,7 +26,7 @@ var SimpleMap = Construct.extend({
 			});
 		} else {
 			if(prop !== "constructor") {
-				ObserveInfo.observe(this, prop);
+				Observation.add(this, prop);
 				return this._data[prop];
 			}
 
