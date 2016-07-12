@@ -19,7 +19,7 @@ var SimpleMap = Construct.extend({
 		if(arguments.length > 1) {
 			var old = this._data[prop];
 			this._data[prop] = value;
-			canBatch.trigger.call(this, prop, [old]);
+			canBatch.trigger.call(this, prop, [value, old]);
 		} else if(typeof prop === 'object') {
 			Object.keys(prop).forEach(function(key) {
 				self.attr(key, prop[key]);

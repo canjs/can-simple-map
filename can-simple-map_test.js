@@ -10,11 +10,12 @@ QUnit.test("adds defaultMap type", function() {
 	QUnit.ok(map instanceof SimpleMap);
 });
 
-QUnit.test("instantiates and gets events", 1, function() {
+QUnit.test("instantiates and gets events", 2, function() {
 	var map = new SimpleMap({ age: 29 });
 
-	map.on('age', function(ev, old) {
-		QUnit.equal(old, 29);
+	map.on('age', function(ev, newVal, oldVal) {
+		QUnit.equal(oldVal, 29);
+		QUnit.equal(newVal, 30);
 	});
 
 	map.attr('age', 30);
