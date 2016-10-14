@@ -1,13 +1,23 @@
 var QUnit = require('steal-qunit');
 var SimpleMap = require('./can-simple-map');
 var compute = require('can-compute');
-var types = require("can-util/js/types/types");
+var clone = require('steal-clone');
 
 QUnit.module('can-simple-map');
 
 QUnit.test("adds defaultMap type", function() {
-	var map = new types.DefaultMap();
-	QUnit.ok(map instanceof SimpleMap);
+	stop();
+	var c = clone();
+
+	// ensure types.DefaultMap is not impacted by
+	// other map types that may have been loaded
+	c.import('can-util/js/types/types').then(function(types) {
+		c.import('./can-simple-map').then(function(SimpleMap) {
+			var map = new types.DefaultMap();
+			QUnit.ok(map instanceof SimpleMap);
+			start();
+		});
+	});
 });
 
 QUnit.test("instantiates and gets events", 2, function() {
