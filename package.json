@@ -54,10 +54,10 @@
     "npmAlgorithm": "flat"
   },
   "dependencies": {
-    "can-construct": "^3.0.0-pre.3",
-    "can-event": "^3.0.0-pre.3",
-    "can-observation": "^3.0.0-pre.0",
-    "can-util": "^3.0.0-pre.13"
+    "can-construct": "^3.0.0",
+    "can-event": "^3.0.1",
+    "can-observation": "^3.0.1",
+    "can-util": "^3.0.1"
   },
   "devDependencies": {
     "can-compute": "^3.0.0-pre.2",
