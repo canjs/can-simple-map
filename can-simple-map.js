@@ -1,5 +1,4 @@
 var Construct = require("can-construct");
-var canBatch = require("can-event/batch/batch");
 var canEvent = require("can-event");
 var assign = require("can-util/js/assign/assign");
 var types = require("can-util/js/types/types");
@@ -19,7 +18,7 @@ var SimpleMap = Construct.extend({
 		if(arguments.length > 1) {
 			var old = this._data[prop];
 			this._data[prop] = value;
-			canBatch.trigger.call(this, prop, [value, old]);
+			canEvent.dispatch.call(this, prop, [value, old]);
 		} else if(typeof prop === 'object') {
 			Object.keys(prop).forEach(function(key) {
 				self.attr(key, prop[key]);
