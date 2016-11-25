@@ -39,3 +39,23 @@ QUnit.test("trying to read constructor from refs scope is ok", function(){
 	construct.bind("change", function(){});
 	equal(construct(), SimpleMap);
 });
+
+QUnit.test("get set and serialize", function(){
+	var map = new SimpleMap();
+	map.set("foo","bar");
+	QUnit.equal(map.get("foo"), "bar");
+	QUnit.deepEqual(map.get(), {foo: "bar"});
+
+	map.set({zed: "ted"});
+
+	QUnit.deepEqual(map.get(), {foo: "bar", zed: "ted"});
+
+	QUnit.deepEqual(map.serialize(), {foo: "bar", zed: "ted"});
+
+	var deepMap = new SimpleMap({a: "b"});
+
+	map.set("deep", deepMap);
+
+
+	QUnit.deepEqual(map.serialize(), {foo: "bar", zed: "ted", deep: {a: "b"}});
+});

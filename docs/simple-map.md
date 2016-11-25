@@ -3,6 +3,7 @@
 @group can-simple-map.prototype 0 prototype
 @inherits can-construct
 @description A performant live-bound map.
+@package ../package.json
 
 @signature `new SimpleMap([props])`
 
