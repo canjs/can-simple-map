@@ -28,16 +28,6 @@
     "develop": "done-serve --static --develop --port 8080"
   },
   "main": "can-simple-map",
-  "browser": {
-    "transform": [
-      "cssify"
-    ]
-  },
-  "browserify": {
-    "transform": [
-      "cssify"
-    ]
-  },
   "keywords": [],
   "system": {
     "main": "can-simple-map",
@@ -61,7 +51,6 @@
   },
   "devDependencies": {
     "can-compute": "^3.0.0-pre.2",
-    "cssify": "^0.6.0",
     "documentjs": "^0.4.2",
     "done-serve": "^0.2.0",
     "donejs-cli": "^0.9.4",
