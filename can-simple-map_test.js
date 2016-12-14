@@ -11,7 +11,7 @@ QUnit.test("adds defaultMap type", function() {
 
 	// ensure types.DefaultMap is not impacted by
 	// other map types that may have been loaded
-	c.import('can-util/js/types/types').then(function(types) {
+	c.import('can-types').then(function(types) {
 		c.import('./can-simple-map').then(function(SimpleMap) {
 			var map = new types.DefaultMap();
 			QUnit.ok(map instanceof SimpleMap);

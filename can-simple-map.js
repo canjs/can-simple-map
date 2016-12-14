@@ -2,7 +2,7 @@ var Construct = require("can-construct");
 var canEvent = require("can-event");
 var assign = require("can-util/js/assign/assign");
 var each = require("can-util/js/each/each");
-var types = require("can-util/js/types/types");
+var types = require("can-types");
 var Observation = require("can-observation");
 
 // this is a very simple can-map like object
