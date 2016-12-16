@@ -47,10 +47,11 @@
     "can-construct": "^3.0.0",
     "can-event": "^3.0.1",
     "can-observation": "^3.0.1",
-    "can-util": "^3.0.1"
+    "can-types": "^1.0.1",
+    "can-util": "^3.1.1"
   },
   "devDependencies": {
-    "can-compute": "^3.0.0-pre.2",
+    "can-compute": "^3.0.4",
     "documentjs": "^0.4.2",
     "done-serve": "^0.2.0",
     "donejs-cli": "^0.9.4",
