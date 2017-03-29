@@ -50,7 +50,7 @@
     "can-util": "^3.1.1"
   },
   "devDependencies": {
-    "can-compute": "^3.0.4",
+    "can-compute": "3.0.7",
     "documentjs": "^0.4.2",
     "done-serve": "^0.2.0",
     "donejs-cli": "^0.9.4",
