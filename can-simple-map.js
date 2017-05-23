@@ -1,5 +1,6 @@
 var Construct = require("can-construct");
 var canEvent = require("can-event");
+var canBatch = require("can-event/batch/batch");
 var assign = require("can-util/js/assign/assign");
 var each = require("can-util/js/each/each");
 var types = require("can-types");
@@ -24,12 +25,24 @@ var SimpleMap = Construct.extend(
 			var self = this;
 
 			if(arguments.length === 0 ) {
-				return assign({}, this._data);
+				Observation.add(this,"__keys");
+				var data = {};
+				each(this._data, function(value, prop){
+					Observation.add(this, prop);
+					data[prop] = value;
+				}, this);
+				return data;
 			}
 			else if(arguments.length > 1) {
+				var had = this._data.hasOwnProperty(prop);
 				var old = this._data[prop];
 				this._data[prop] = value;
+				canBatch.start();
+				if(!had) {
+					canEvent.dispatch.call(this, "__keys", []);
+				}
 				canEvent.dispatch.call(this, prop, [value, old]);
+				canBatch.stop();
 			}
 			// 1 argument
 			else if(typeof prop === 'object') {
@@ -48,10 +61,12 @@ var SimpleMap = Construct.extend(
 		},
 		serialize: function(){
 			var serialized = {};
+			Observation.add(this,"__keys");
 			each(this._data, function(data, prop){
+				Observation.add(this, prop);
 				serialized[prop] = data && (typeof data.serialize === "function") ?
 					data.serialize() : data;
-			});
+			}, this);
 			return serialized;
 		},
 		get: function(){
