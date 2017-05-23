@@ -59,3 +59,25 @@ QUnit.test("get set and serialize", function(){
 
 	QUnit.deepEqual(map.serialize(), {foo: "bar", zed: "ted", deep: {a: "b"}});
 });
+
+QUnit.test("serialize and get are observable",2, function(){
+
+	var map = new SimpleMap();
+	var c1 = compute(function(){
+		return map.serialize();
+	});
+	var c2 = compute(function(){
+		return map.get();
+	});
+
+	c1.on("change", function(ev, newValue){
+		QUnit.deepEqual(newValue, {foo:"bar"}, "updated serialize");
+	});
+
+	c2.on("change", function(ev, newValue){
+		QUnit.deepEqual(newValue, {foo:"bar"}, "updated get");
+	});
+
+	map.set("foo","bar");
+
+});
