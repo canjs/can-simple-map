@@ -1,0 +1,16 @@
+/*can-simple-map@3.2.0-pre.1#single-reference*/
+var canReflect = require('can-reflect/reflections/get-set/get-set');
+var CID = require('can-cid');
+var singleReference;
+singleReference = {
+    set: function (obj, key, value, extraKey) {
+        canReflect.set(obj, extraKey ? CID(key) + ':' + extraKey : CID(key), value);
+    },
+    getAndDelete: function (obj, key, extraKey) {
+        var cid = extraKey ? CID(key) + ':' + extraKey : CID(key);
+        var value = canReflect.get(obj, cid);
+        canReflect.delete(obj, cid);
+        return value;
+    }
+};
+module.exports = singleReference;
