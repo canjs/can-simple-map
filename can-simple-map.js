@@ -82,15 +82,6 @@ var SimpleMap = Construct.extend(
 
 assign(SimpleMap.prototype, canEvent);
 
-var oldIsMapLike = types.isMapLike;
-types.isMapLike = function(obj) {
-	if(obj instanceof SimpleMap) {
-		return true;
-	}
-
-	return oldIsMapLike.call(this, obj);
-};
-
 if(!types.DefaultMap) {
 	types.DefaultMap = SimpleMap;
 }
