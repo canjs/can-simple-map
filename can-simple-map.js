@@ -5,9 +5,9 @@ var assign = require("can-util/js/assign/assign");
 var each = require("can-util/js/each/each");
 var types = require("can-types");
 var Observation = require("can-observation");
-var canSymbol = require("can-symbol");
 var canReflect = require("can-reflect");
 var singleReference = require("can-util/js/single-reference/single-reference");
+var CIDMap = require("can-util/js/cid-map/cid-map");
 
 // this is a very simple can-map like object
 var SimpleMap = Construct.extend(
@@ -63,14 +63,7 @@ var SimpleMap = Construct.extend(
 			}
 		},
 		serialize: function(){
-			var serialized = {};
-			Observation.add(this,"__keys");
-			each(this._data, function(data, prop){
-				Observation.add(this, prop);
-				serialized[prop] = data && (typeof data.serialize === "function") ?
-					data.serialize() : data;
-			}, this);
-			return serialized;
+			return canReflect.serialize(this, CIDMap);
 		},
 		get: function(){
 			return this.attr.apply(this, arguments);
@@ -86,38 +79,61 @@ if(!types.DefaultMap) {
 	types.DefaultMap = SimpleMap;
 }
 
-// Set up translations between can-event and can-reflect bindings.
-SimpleMap.prototype[canSymbol.for("can.onKeyValue")] = function(key, handler){
-	var translationHandler = function(ev, newValue, oldValue){
-		handler.call(this, newValue, oldValue);
-	};
-	singleReference.set(handler, this, translationHandler, key);
 
-	this.addEventListener(key, translationHandler);
-};
+canReflect.assignSymbols(SimpleMap.prototype,{
+	// -type-
+	"can.isMapLike": true,
+	"can.isListLike": false,
+	"can.isValueLike": false,
 
-SimpleMap.prototype[canSymbol.for("can.offKeyValue")] = function(key, handler){
-	this.removeEventListener(key, singleReference.getAndDelete(handler, this, key) );
-};
+	// -get/set-
+	"can.getKeyValue": SimpleMap.prototype.get,
+	"can.setKeyValue": SimpleMap.prototype.set,
+	"can.deleteKeyValue": function(prop) {
+		return this.attr(prop, undefined);
+	},
+
+
+	// -shape
+	"can.getOwnEnumerableKeys": function(){
+		Observation.add(this, '__keys');
+		return Object.keys(this._data);
+	},
+
+	// -shape get/set-
+	"can.assignDeep": function(source){
+		canBatch.start();
+		// TODO: we should probably just throw an error instead of cleaning
+		canReflect.assignMap(this, source);
+		canBatch.stop();
+	},
+	"can.updateDeep": function(source){
+		canBatch.start();
+		// TODO: we should probably just throw an error instead of cleaning
+		canReflect.updateMap(this, source);
+		canBatch.stop();
+	},
+	// observable
+	"can.onKeyValue": function(key, handler){
+		var translationHandler = function(ev, newValue, oldValue){
+			handler.call(this, newValue, oldValue);
+		};
+		singleReference.set(handler, this, translationHandler, key);
+
+		this.addEventListener(key, translationHandler);
+	},
+	"can.offKeyValue": function(key, handler){
+		this.removeEventListener(key, singleReference.getAndDelete(handler, this, key) );
+	},
+	"can.keyHasDependencies": function(key) {
+		return false;
+	},
+	"can.getKeyDependencies": function(key) {
+		return undefined;
+	}
+});
 
 // Setup other symbols
-SimpleMap.prototype[canSymbol.for("can.isMapLike")] = true;
-SimpleMap.prototype[canSymbol.for("can.isListLike")] = false;
-SimpleMap.prototype[canSymbol.for("can.isValueLike")] = false;
-SimpleMap.prototype[canSymbol.for("can.getKeyValue")] = SimpleMap.prototype.get;
-SimpleMap.prototype[canSymbol.for("can.setKeyValue")] = SimpleMap.prototype.set;
-SimpleMap.prototype[canSymbol.for("can.getValue")] = SimpleMap.prototype.get;
-SimpleMap.prototype[canSymbol.for("can.setValue")] = SimpleMap.prototype.set;
-SimpleMap.prototype[canSymbol.for("can.deleteKeyValue")] = function(prop) {
-	return this.attr(prop, undefined);
-};
-// SimpleMaps don't do dependent keys, so this is always false
-SimpleMap.prototype[canSymbol.for("can.keyHasDependencies")] = function(key) {
-	return false;
-};
-// ...and this is always empty
-SimpleMap.prototype[canSymbol.for("can.getKeyDependencies")] = function(key) {
-	return undefined;
-};
+
 
 module.exports = SimpleMap;
