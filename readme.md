@@ -1,5 +1,7 @@
 # can-simple-map
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/canjs/can-simple-map.svg)](https://greenkeeper.io/)
+
 [![Build Status](https://travis-ci.org/canjs/can-simple-map.png?branch=master)](https://travis-ci.org/canjs/can-simple-map)
 
 A performant live-bound map
