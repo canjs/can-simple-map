@@ -1,76 +1,26 @@
 # can-simple-map
 
+[![Join the chat at https://gitter.im/canjs/canjs](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/canjs/canjs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/canjs/can-simple-map/blob/master/LICENSE.md)
+[![npm version](https://badge.fury.io/js/can-simple-map.svg)](https://www.npmjs.com/package/can-simple-map)
+[![Travis build status](https://travis-ci.org/canjs/can-simple-map.svg?branch=master)](https://travis-ci.org/canjs/can-simple-map)
 [![Greenkeeper badge](https://badges.greenkeeper.io/canjs/can-simple-map.svg)](https://greenkeeper.io/)
-
-[![Build Status](https://travis-ci.org/canjs/can-simple-map.png?branch=master)](https://travis-ci.org/canjs/can-simple-map)
 
 A performant live-bound map
 
-## Usage
+## Documentation
 
-### ES6 use
+Read the [API docs on CanJS.com](https://canjs.com/doc/can-simple-map.html).
 
-With StealJS, you can import this module directly in a template that is autorendered:
+## Changelog
 
-```js
-import plugin from 'can-simple-map';
-```
-
-### CommonJS use
-
-Use `require` to load `can-simple-map` and everything else
-needed to create a template that uses `can-simple-map`:
-
-```js
-var plugin = require("can-simple-map");
-```
-
-## AMD use
-
-Configure the `can` and `jquery` paths and the `can-simple-map` package:
-
-```html
-<script src="require.js"></script>
-<script>
-	require.config({
-	    paths: {
-	        "jquery": "node_modules/jquery/dist/jquery",
-	        "can": "node_modules/canjs/dist/amd/can"
-	    },
-	    packages: [{
-		    	name: 'can-simple-map',
-		    	location: 'node_modules/can-simple-map/dist/amd',
-		    	main: 'lib/can-simple-map'
-	    }]
-	});
-	require(["main-amd"], function(){});
-</script>
-```
-
-### Standalone use
-
-Load the `global` version of the plugin:
-
-```html
-<script src='./node_modules/can-simple-map/dist/global/can-simple-map.js'></script>
-```
+See the [latest releases on GitHub](https://github.com/canjs/can-simple-map/releases).
 
 ## Contributing
 
-### Making a Build
+The [contribution guide](https://github.com/canjs/can-simple-map/blob/master/CONTRIBUTING.md) has information on getting help, reporting bugs, developing locally, and more.
 
-To make a build of the distributables into `dist/` in the cloned repository run
+## License
 
-```
-npm install
-node build
-```
+[MIT](https://github.com/canjs/can-simple-map/blob/master/LICENSE.md)
 
-### Running the tests
-
-Tests can run in the browser by opening a webserver and visiting the `test.html` page.
-Automated tests that run the tests from the command line in Firefox can be run with
-
-```
-npm test
-```
