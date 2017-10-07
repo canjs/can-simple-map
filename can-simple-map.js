@@ -1,13 +1,11 @@
 var Construct = require("can-construct");
-var canEvent = require("can-event");
-var canBatch = require("can-event/batch/batch");
-var assign = require("can-util/js/assign/assign");
+var eventQueue = require("can-event-queue");
+var queues = require("can-queues");
 var each = require("can-util/js/each/each");
 var types = require("can-types");
-var Observation = require("can-observation");
+var ObservationRecorder = require("can-observation-recorder");
 var canReflect = require("can-reflect");
-var singleReference = require("can-util/js/single-reference/single-reference");
-var CIDMap = require("can-util/js/cid-map/cid-map");
+var CIDMap = require("can-cid/map/map");
 
 // this is a very simple can-map like object
 var SimpleMap = Construct.extend(
@@ -28,10 +26,10 @@ var SimpleMap = Construct.extend(
 			var self = this;
 
 			if(arguments.length === 0 ) {
-				Observation.add(this,"__keys");
+				ObservationRecorder.add(this,"__keys");
 				var data = {};
 				each(this._data, function(value, prop){
-					Observation.add(this, prop);
+					ObservationRecorder.add(this, prop);
 					data[prop] = value;
 				}, this);
 				return data;
@@ -40,12 +38,12 @@ var SimpleMap = Construct.extend(
 				var had = this._data.hasOwnProperty(prop);
 				var old = this._data[prop];
 				this._data[prop] = value;
-				canBatch.start();
+				queues.batch.start();
 				if(!had) {
-					canEvent.dispatch.call(this, "__keys", []);
+					this.dispatch("__keys", []);
 				}
-				canEvent.dispatch.call(this, prop, [value, old]);
-				canBatch.stop();
+				this.dispatch(prop, [value, old]);
+				queues.batch.stop();
 			}
 			// 1 argument
 			else if(typeof prop === 'object') {
@@ -55,7 +53,7 @@ var SimpleMap = Construct.extend(
 			}
 			else {
 				if(prop !== "constructor") {
-					Observation.add(this, prop);
+					ObservationRecorder.add(this, prop);
 					return this._data[prop];
 				}
 
@@ -73,7 +71,7 @@ var SimpleMap = Construct.extend(
 		}
 	});
 
-assign(SimpleMap.prototype, canEvent);
+eventQueue(SimpleMap.prototype);
 
 if(!types.DefaultMap) {
 	types.DefaultMap = SimpleMap;
@@ -96,34 +94,22 @@ canReflect.assignSymbols(SimpleMap.prototype,{
 
 	// -shape
 	"can.getOwnEnumerableKeys": function(){
-		Observation.add(this, '__keys');
+		ObservationRecorder.add(this, '__keys');
 		return Object.keys(this._data);
 	},
 
 	// -shape get/set-
 	"can.assignDeep": function(source){
-		canBatch.start();
+		queues.batch.start();
 		// TODO: we should probably just throw an error instead of cleaning
 		canReflect.assignMap(this, source);
-		canBatch.stop();
+		queues.batch.stop();
 	},
 	"can.updateDeep": function(source){
-		canBatch.start();
+		queues.batch.start();
 		// TODO: we should probably just throw an error instead of cleaning
 		canReflect.updateMap(this, source);
-		canBatch.stop();
-	},
-	// observable
-	"can.onKeyValue": function(key, handler){
-		var translationHandler = function(ev, newValue, oldValue){
-			handler.call(this, newValue, oldValue);
-		};
-		singleReference.set(handler, this, translationHandler, key);
-
-		this.addEventListener(key, translationHandler);
-	},
-	"can.offKeyValue": function(key, handler){
-		this.removeEventListener(key, singleReference.getAndDelete(handler, this, key) );
+		queues.batch.stop();
 	},
 	"can.keyHasDependencies": function(key) {
 		return false;

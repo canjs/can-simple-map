@@ -1,9 +1,9 @@
 var QUnit = require('steal-qunit');
 var SimpleMap = require('./can-simple-map');
-var compute = require('can-compute');
 var clone = require('steal-clone');
 var canSymbol = require('can-symbol');
 var canReflect = require('can-reflect');
+var Observation = require("can-observation");
 
 QUnit.module('can-simple-map');
 
@@ -35,11 +35,13 @@ QUnit.test("instantiates and gets events", 2, function() {
 
 QUnit.test("trying to read constructor from refs scope is ok", function(){
 	var map = new SimpleMap();
-	var construct = compute(function(){
+	var construct = new Observation(function(){
 		return map.attr("constructor");
 	});
-	construct.bind("change", function(){});
-	equal(construct(), SimpleMap);
+	canReflect.onValue(construct, function(){});
+
+
+	equal(canReflect.getValue(construct), SimpleMap);
 });
 
 QUnit.test("get set and serialize", function(){
@@ -65,18 +67,18 @@ QUnit.test("get set and serialize", function(){
 QUnit.test("serialize and get are observable",2, function(){
 
 	var map = new SimpleMap();
-	var c1 = compute(function(){
+	var c1 = new Observation(function(){
 		return map.serialize();
 	});
-	var c2 = compute(function(){
+	var c2 = new Observation(function(){
 		return map.get();
 	});
 
-	c1.on("change", function(ev, newValue){
+	canReflect.onValue(c1, function(newValue){
 		QUnit.deepEqual(newValue, {foo:"bar"}, "updated serialize");
 	});
 
-	c2.on("change", function(ev, newValue){
+	canReflect.onValue(c2, function(newValue){
 		QUnit.deepEqual(newValue, {foo:"bar"}, "updated get");
 	});
 
@@ -126,14 +128,14 @@ QUnit.test("can-reflect setKeyValue", function(){
 	QUnit.equal(a.attr("a"), "c", "setKeyValue");
 });
 
-QUnit.test("can-reflect getKeyDependencies", function() { 
+QUnit.test("can-reflect getKeyDependencies", function() {
 	var a = new SimpleMap({ "a": "a" });
 
 	ok(!canReflect.getKeyDependencies(a, "a"), "No dependencies before binding");
 
 });
 
-QUnit.test("registered symbols", function() { 
+QUnit.test("registered symbols", function() {
 	var a = new SimpleMap({ "a": "a" });
 
 	ok(a[canSymbol.for("can.isMapLike")], "can.isMapLike");
