@@ -47,9 +47,11 @@ var SimpleMap = Construct.extend(
 			}
 			// 1 argument
 			else if(typeof prop === 'object') {
+				queues.batch.start();
 				canReflect.eachKey(prop, function(value, key) {
 					self.attr(key, value);
 				});
+				queues.batch.stop();
 			}
 			else {
 				if(prop !== "constructor") {
