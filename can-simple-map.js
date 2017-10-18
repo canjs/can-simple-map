@@ -8,7 +8,7 @@ var canReflect = require("can-reflect");
 var CIDMap = require("can-cid/map/map");
 
 // this is a very simple can-map like object
-var SimpleMap = Construct.extend(
+var SimpleMap = Construct.extend("SimpleMap",
 	/**
 	 * @prototype
 	 */
@@ -42,7 +42,21 @@ var SimpleMap = Construct.extend(
 				if(!had) {
 					this.dispatch("__keys", []);
 				}
-				this.dispatch(prop, [value, old]);
+
+				//!steal-remove-start
+				var reasonLog = [ canReflect.getName(this) + "'s", prop, "changed to", JSON.stringify(value), "from", JSON.stringify(old) ];
+				//!steal-remove-end
+				this.dispatch({
+					type: prop,
+					//!steal-remove-start
+					reasonLog: reasonLog,
+					makeMeta: function makeMeta(handler, context, args) {
+						return {
+							log: [ canReflect.getName(handler), "called because" ].concat(reasonLog),
+						};
+					},
+					//!steal-remove-end
+				}, [value, old]);
 				queues.batch.stop();
 			}
 			// 1 argument
@@ -118,7 +132,13 @@ canReflect.assignSymbols(SimpleMap.prototype,{
 	},
 	"can.getKeyDependencies": function(key) {
 		return undefined;
-	}
+	},
+
+	//!steal-remove-start
+	"can.getName": function() {
+		return canReflect.getName(this.constructor) + "{}";
+	},
+	//!steal-remove-end
 });
 
 // Setup other symbols
