@@ -44,7 +44,7 @@ var SimpleMap = Construct.extend("SimpleMap",
 				}
 
 				//!steal-remove-start
-				var reasonLog = [ canReflect.getName(this) + "'s", prop, "changed to", JSON.stringify(value), "from", JSON.stringify(old) ];
+				var reasonLog = [ canReflect.getName(this) + "'s", prop, "changed to", value, "from", old ];
 				//!steal-remove-end
 				this.dispatch({
 					type: prop,
