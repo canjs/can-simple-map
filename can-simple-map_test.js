@@ -4,8 +4,14 @@ var clone = require('steal-clone');
 var canSymbol = require('can-symbol');
 var canReflect = require('can-reflect');
 var Observation = require("can-observation");
+var dev = require("can-log/dev/dev");
 
 QUnit.module('can-simple-map');
+
+QUnit.test("sets constructor name", function(assert) {
+	var map = new SimpleMap();
+	assert.equal(map.constructor.name, "SimpleMap");
+});
 
 QUnit.test("adds defaultMap type", function() {
 	stop();
@@ -153,4 +159,80 @@ QUnit.test("registered symbols", function() {
 
 	a[canSymbol.for("can.offKeyValue")]("a", handler);
 	a.attr("a", "d"); // doesn't trigger handler
+});
+
+QUnit.test("log all property changes", function(assert) {
+	var map = new SimpleMap();
+	var done = assert.async();
+
+	map.log();
+
+	var changed = [];
+	var log = dev.log;
+	dev.log = function() {
+		changed.push(JSON.parse(arguments[2]));
+	};
+
+	map.set("foo","bar");
+	map.set({zed: "ted"});
+
+	var deepMap = new SimpleMap({a: "b"});
+	map.set("deep", deepMap);
+
+	assert.expect(1);
+	setTimeout(function() {
+		dev.log = log;
+		assert.deepEqual(changed, ["foo", "zed", "deep"], "should log all properties");
+		done();
+	});
+});
+
+QUnit.test("log single property changes", function(assert) {
+	var map = new SimpleMap();
+	var done = assert.async();
+
+	map.log("foo");
+
+	var changed = [];
+	var log = dev.log;
+	dev.log = function() {
+		changed.push(JSON.parse(arguments[2]));
+	};
+
+	map.set("foo", "bar");
+	map.set("bar", "bar");
+	map.set("baz", "baz");
+
+	assert.expect(1);
+	setTimeout(function() {
+		dev.log = log;
+		assert.deepEqual(changed, ["foo"], "should only log 'foo' changes");
+		done();
+	});
+});
+
+QUnit.test("log multiple property changes", function(assert) {
+	var map = new SimpleMap();
+	var done = assert.async();
+
+	map.log("foo");
+	map.log("qux");
+
+	var changed = [];
+	var log = dev.log;
+	dev.log = function() {
+		changed.push(JSON.parse(arguments[2]));
+	};
+
+	map.set("foo", "foo");
+	map.set("bar", "bar");
+	map.set("baz", "baz");
+	map.set("qux", "qux");
+
+	assert.expect(1);
+	setTimeout(function() {
+		dev.log = log;
+		assert.deepEqual(changed, ["foo", "qux"], "should log onlt foo and qux");
+		done();
+	});
 });
