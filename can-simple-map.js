@@ -59,7 +59,6 @@ var SimpleMap = Construct.extend("SimpleMap",
 				}
 
 				//!steal-remove-start
-				var reasonLog = [ canReflect.getName(this) + "'s", prop, "changed to", value, "from", old ];
 				if (typeof this._log === "function") {
 					this._log(prop, value, old);
 				}
@@ -68,12 +67,7 @@ var SimpleMap = Construct.extend("SimpleMap",
 				this.dispatch({
 					type: prop,
 					//!steal-remove-start
-					reasonLog: reasonLog,
-					makeMeta: function makeMeta(handler, context, args) {
-						return {
-							log: [ canReflect.getName(handler), "called because" ].concat(reasonLog),
-						};
-					},
+					reasonLog: [ canReflect.getName(this) + "'s", prop, "changed to", value, "from", old ],
 					//!steal-remove-end
 				}, [value, old]);
 				queues.batch.stop();
