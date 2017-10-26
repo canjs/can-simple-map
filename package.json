@@ -41,7 +41,6 @@
     ]
   },
   "dependencies": {
-    "can-cid": "^1.0.3",
     "can-construct": "^3.2.0",
     "can-event-queue": "<2.0.0",
     "can-key-tree": "<2.0.0",
@@ -51,7 +50,6 @@
     "can-queues": "<2.0.0",
     "can-reflect": "^1.2.1",
     "can-symbol": "^1.0.0",
-    "can-types": "^1.1.0",
     "can-util": "^3.9.0"
   },
   "devDependencies": {

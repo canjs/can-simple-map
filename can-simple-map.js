@@ -2,10 +2,8 @@ var Construct = require("can-construct");
 var eventQueue = require("can-event-queue");
 var queues = require("can-queues");
 var each = require("can-util/js/each/each");
-var types = require("can-types");
 var ObservationRecorder = require("can-observation-recorder");
 var canReflect = require("can-reflect");
-var CIDMap = require("can-cid/map/map");
 var dev = require("can-log/dev/dev");
 var canSymbol = require("can-symbol");
 
@@ -90,7 +88,7 @@ var SimpleMap = Construct.extend("SimpleMap",
 			}
 		},
 		serialize: function(){
-			return canReflect.serialize(this, CIDMap);
+			return canReflect.serialize(this, Map);
 		},
 		get: function(){
 			return this.attr.apply(this, arguments);
@@ -130,11 +128,6 @@ var SimpleMap = Construct.extend("SimpleMap",
 );
 
 eventQueue(SimpleMap.prototype);
-
-if(!types.DefaultMap) {
-	types.DefaultMap = SimpleMap;
-}
-
 
 canReflect.assignSymbols(SimpleMap.prototype,{
 	// -type-

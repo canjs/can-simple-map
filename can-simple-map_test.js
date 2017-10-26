@@ -1,6 +1,5 @@
 var QUnit = require('steal-qunit');
 var SimpleMap = require('./can-simple-map');
-var clone = require('steal-clone');
 var canSymbol = require('can-symbol');
 var canReflect = require('can-reflect');
 var Observation = require("can-observation");
@@ -11,21 +10,6 @@ QUnit.module('can-simple-map');
 QUnit.test("sets constructor name", function(assert) {
 	var map = new SimpleMap();
 	assert.equal(map.constructor.name, "SimpleMap");
-});
-
-QUnit.test("adds defaultMap type", function() {
-	stop();
-	var c = clone();
-
-	// ensure types.DefaultMap is not impacted by
-	// other map types that may have been loaded
-	c.import('can-types').then(function(types) {
-		c.import('./can-simple-map').then(function(SimpleMap) {
-			var map = new types.DefaultMap();
-			QUnit.ok(map instanceof SimpleMap);
-			start();
-		});
-	});
 });
 
 QUnit.test("instantiates and gets events", 2, function() {
