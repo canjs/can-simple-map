@@ -11,9 +11,6 @@ var CIDMap = require("can-util/js/cid-map/cid-map");
 
 // this is a very simple can-map like object
 var SimpleMap = Construct.extend(
-	/**
-	 * @prototype
-	 */
 	{
 		// ### setup
 		// A setup function for the instantiation of a simple-map.
