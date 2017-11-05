@@ -2,13 +2,26 @@ var Construct = require("can-construct");
 var eventQueue = require("can-event-queue");
 var queues = require("can-queues");
 var each = require("can-util/js/each/each");
-var types = require("can-types");
 var ObservationRecorder = require("can-observation-recorder");
 var canReflect = require("can-reflect");
-var CIDMap = require("can-cid/map/map");
+var dev = require("can-log/dev/dev");
+var canSymbol = require("can-symbol");
+
+// Ensure the "obj" passed as an argument has an object on @@can.meta
+var ensureMeta = function ensureMeta(obj) {
+	var metaSymbol = canSymbol.for("can.meta");
+	var meta = obj[metaSymbol];
+
+	if (!meta) {
+		meta = {};
+		canReflect.setKeyValue(obj, metaSymbol, meta);
+	}
+
+	return meta;
+};
 
 // this is a very simple can-map like object
-var SimpleMap = Construct.extend(
+var SimpleMap = Construct.extend("SimpleMap",
 	/**
 	 * @prototype
 	 */
@@ -44,7 +57,19 @@ var SimpleMap = Construct.extend(
 				if(!had) {
 					this.dispatch("__keys", []);
 				}
-				this.dispatch(prop, [value, old]);
+
+				//!steal-remove-start
+				if (typeof this._log === "function") {
+					this._log(prop, value, old);
+				}
+				//!steal-remove-end
+
+				this.dispatch({
+					type: prop,
+					//!steal-remove-start
+					reasonLog: [ canReflect.getName(this) + "'s", prop, "changed to", value, "from", old ],
+					//!steal-remove-end
+				}, [value, old]);
 				queues.batch.stop();
 			}
 			// 1 argument
@@ -65,22 +90,46 @@ var SimpleMap = Construct.extend(
 			}
 		},
 		serialize: function(){
-			return canReflect.serialize(this, CIDMap);
+			return canReflect.serialize(this, Map);
 		},
 		get: function(){
 			return this.attr.apply(this, arguments);
 		},
 		set: function(){
 			return this.attr.apply(this, arguments);
+		},
+		// call `.log()` to log all property changes
+		// pass a single property to only get logs for said property, e.g: `.log("foo")`
+		log: function(key) {
+			//!steal-remove-start
+			var quoteString = function quoteString(x) {
+				return typeof x === "string" ? JSON.stringify(x) : x;
+			};
+
+			var meta = ensureMeta(this);
+			meta.allowedLogKeysSet = meta.allowedLogKeysSet || new Set();
+
+			if (key) {
+				meta.allowedLogKeysSet.add(key);
+			}
+
+			this._log = function(prop, current, previous, log) {
+				if (key && !meta.allowedLogKeysSet.has(prop)) {
+					return;
+				}
+				dev.log(
+					canReflect.getName(this),
+					"\n key ", quoteString(prop),
+					"\n is  ", quoteString(current),
+					"\n was ", quoteString(previous)
+				);
+			};
+			//!steal-remove-end
 		}
-	});
+	}
+);
 
 eventQueue(SimpleMap.prototype);
-
-if(!types.DefaultMap) {
-	types.DefaultMap = SimpleMap;
-}
-
 
 canReflect.assignSymbols(SimpleMap.prototype,{
 	// -type-
@@ -120,7 +169,13 @@ canReflect.assignSymbols(SimpleMap.prototype,{
 	},
 	"can.getKeyDependencies": function(key) {
 		return undefined;
-	}
+	},
+
+	//!steal-remove-start
+	"can.getName": function() {
+		return canReflect.getName(this.constructor) + "{}";
+	},
+	//!steal-remove-end
 });
 
 // Setup other symbols
