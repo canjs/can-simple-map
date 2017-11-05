@@ -4,6 +4,7 @@ var clone = require('steal-clone');
 var canSymbol = require('can-symbol');
 var canReflect = require('can-reflect');
 var Observation = require("can-observation");
+var ObservationRecorder = require("can-observation-recorder");
 
 QUnit.module('can-simple-map');
 
@@ -153,4 +154,14 @@ QUnit.test("registered symbols", function() {
 
 	a[canSymbol.for("can.offKeyValue")]("a", handler);
 	a.attr("a", "d"); // doesn't trigger handler
+});
+
+QUnit.test("initialization does not cause Observation.add", function(){
+	ObservationRecorder.start();
+	var m = new SimpleMap();
+	m = new SimpleMap({first: "second"});
+	var observationRecord = ObservationRecorder.stop();
+
+	QUnit.equal(observationRecord.keyDependencies.size , 0, "no key deps");
+	QUnit.equal(observationRecord.valueDependencies.size , 0, "no value deps");
 });

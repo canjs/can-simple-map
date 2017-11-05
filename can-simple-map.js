@@ -17,7 +17,9 @@ var SimpleMap = Construct.extend(
 		// A setup function for the instantiation of a simple-map.
 		setup: function(initialData){
 			this._data = {};
-			this.attr(initialData);
+			if(initialData && typeof initialData === "object") {
+				this.attr(initialData);
+			}
 		},
 		// ### attr
 		// The main get/set interface simple-map.
