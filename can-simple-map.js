@@ -53,24 +53,27 @@ var SimpleMap = Construct.extend("SimpleMap",
 				var had = this._data.hasOwnProperty(prop);
 				var old = this._data[prop];
 				this._data[prop] = value;
-				queues.batch.start();
-				if(!had) {
-					this.dispatch("__keys", []);
-				}
+				if(old !== value) {
+					queues.batch.start();
+					if(!had) {
+						this.dispatch("__keys", []);
+					}
 
-				//!steal-remove-start
-				if (typeof this._log === "function") {
-					this._log(prop, value, old);
-				}
-				//!steal-remove-end
-
-				this.dispatch({
-					type: prop,
 					//!steal-remove-start
-					reasonLog: [ canReflect.getName(this) + "'s", prop, "changed to", value, "from", old ],
+					if (typeof this._log === "function") {
+						this._log(prop, value, old);
+					}
 					//!steal-remove-end
-				}, [value, old]);
-				queues.batch.stop();
+
+					this.dispatch({
+						type: prop,
+						//!steal-remove-start
+						reasonLog: [ canReflect.getName(this) + "'s", prop, "changed to", value, "from", old ],
+						//!steal-remove-end
+					}, [value, old]);
+					queues.batch.stop();
+				}
+
 			}
 			// 1 argument
 			else if(typeof prop === 'object') {

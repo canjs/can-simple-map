@@ -231,3 +231,13 @@ QUnit.test("log multiple property changes", function(assert) {
 		done();
 	});
 });
+
+QUnit.test("don't dispatch events for sets that don't change", 2, function(){
+	var map = new SimpleMap({foo: "bar"});
+	canReflect.onKeyValue(map, "foo", function(newVal, oldVal){
+		QUnit.equal(newVal, "BAR");
+		QUnit.equal(oldVal,"bar")
+	});
+	map.attr("foo","bar");
+	map.attr("foo","BAR");
+});
