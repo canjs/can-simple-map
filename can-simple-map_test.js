@@ -3,11 +3,8 @@ var SimpleMap = require('./can-simple-map');
 var canSymbol = require('can-symbol');
 var canReflect = require('can-reflect');
 var Observation = require("can-observation");
-<<<<<<< HEAD
 var ObservationRecorder = require("can-observation-recorder");
-=======
 var dev = require("can-log/dev/dev");
->>>>>>> d213ec22e862fd05223966fce487db032e1f9fb1
 
 QUnit.module('can-simple-map');
 
