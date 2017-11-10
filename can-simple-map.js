@@ -22,9 +22,6 @@ var ensureMeta = function ensureMeta(obj) {
 
 // this is a very simple can-map like object
 var SimpleMap = Construct.extend("SimpleMap",
-	/**
-	 * @prototype
-	 */
 	{
 		// ### setup
 		// A setup function for the instantiation of a simple-map.
