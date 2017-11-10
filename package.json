@@ -2,7 +2,7 @@
   "name": "can-simple-map",
   "version": "4.0.0-pre.9",
   "description": "A performant live-bound map",
-  "homepage": "https://canjs.com",
+  "homepage": "https://canjs.com/doc/can-simple-map.html",
   "repository": {
     "type": "git",
     "url": "git://github.com/canjs/can-simple-map.git"
