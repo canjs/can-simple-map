@@ -241,3 +241,7 @@ QUnit.test("don't dispatch events for sets that don't change", 2, function(){
 	map.attr("foo","bar");
 	map.attr("foo","BAR");
 });
+
+require("can-reflect-tests/observables/map-like/instance/on-get-set-delete-key")("", function(){
+	return new SimpleMap();
+});

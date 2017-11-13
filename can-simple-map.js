@@ -144,7 +144,24 @@ canReflect.assignSymbols(SimpleMap.prototype,{
 	"can.getKeyValue": SimpleMap.prototype.get,
 	"can.setKeyValue": SimpleMap.prototype.set,
 	"can.deleteKeyValue": function(prop) {
-		return this.attr(prop, undefined);
+		if( this._data.hasOwnProperty(prop) ) {
+			var old = this._data[prop];
+			delete this._data[prop];
+			queues.batch.start();
+			this.dispatch("__keys", []);
+			//!steal-remove-start
+			if (typeof this._log === "function") {
+				this._log(prop, undefined, old);
+			}
+			//!steal-remove-end
+			this.dispatch({
+				type: prop,
+				//!steal-remove-start
+				reasonLog: [ canReflect.getName(this) + "'s", prop, "deleted", old ],
+				//!steal-remove-end
+			}, [undefined, old]);
+			queues.batch.stop();
+		}
 	},
 
 
