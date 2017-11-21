@@ -1,5 +1,5 @@
 var Construct = require("can-construct");
-var eventQueue = require("can-event-queue");
+var eventQueue = require("can-event-queue/map/legacy/legacy");
 var queues = require("can-queues");
 var each = require("can-util/js/each/each");
 var ObservationRecorder = require("can-observation-recorder");
