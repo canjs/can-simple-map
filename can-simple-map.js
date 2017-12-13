@@ -38,7 +38,7 @@ var SimpleMap = Construct.extend("SimpleMap",
 			var self = this;
 
 			if(arguments.length === 0 ) {
-				ObservationRecorder.add(this,"__keys");
+				ObservationRecorder.add(this,"can.keys");
 				var data = {};
 				each(this._data, function(value, prop){
 					ObservationRecorder.add(this, prop);
@@ -51,10 +51,7 @@ var SimpleMap = Construct.extend("SimpleMap",
 				var old = this._data[prop];
 				this._data[prop] = value;
 				if(old !== value) {
-					queues.batch.start();
-					if(!had) {
-						this.dispatch("__keys", []);
-					}
+
 
 					//!steal-remove-start
 					if (typeof this._log === "function") {
@@ -63,12 +60,12 @@ var SimpleMap = Construct.extend("SimpleMap",
 					//!steal-remove-end
 
 					this.dispatch({
+						keyChanged: !had ? prop : undefined,
 						type: prop,
 						//!steal-remove-start
 						reasonLog: [ canReflect.getName(this) + "'s", prop, "changed to", value, "from", old ],
 						//!steal-remove-end
 					}, [value, old]);
-					queues.batch.stop();
 				}
 
 			}
@@ -144,27 +141,26 @@ canReflect.assignSymbols(SimpleMap.prototype,{
 		if( this._data.hasOwnProperty(prop) ) {
 			var old = this._data[prop];
 			delete this._data[prop];
-			queues.batch.start();
-			this.dispatch("__keys", []);
+
 			//!steal-remove-start
 			if (typeof this._log === "function") {
 				this._log(prop, undefined, old);
 			}
 			//!steal-remove-end
 			this.dispatch({
+				keyChanged: prop,
 				type: prop,
 				//!steal-remove-start
 				reasonLog: [ canReflect.getName(this) + "'s", prop, "deleted", old ],
 				//!steal-remove-end
 			}, [undefined, old]);
-			queues.batch.stop();
 		}
 	},
 
 
 	// -shape
 	"can.getOwnEnumerableKeys": function(){
-		ObservationRecorder.add(this, '__keys');
+		ObservationRecorder.add(this, 'can.keys');
 		return Object.keys(this._data);
 	},
 
