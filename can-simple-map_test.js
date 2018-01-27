@@ -1,25 +1,16 @@
 var QUnit = require('steal-qunit');
 var SimpleMap = require('./can-simple-map');
-var compute = require('can-compute');
-var clone = require('steal-clone');
 var canSymbol = require('can-symbol');
 var canReflect = require('can-reflect');
+var Observation = require("can-observation");
+var ObservationRecorder = require("can-observation-recorder");
+var dev = require("can-log/dev/dev");
 
 QUnit.module('can-simple-map');
 
-QUnit.test("adds defaultMap type", function() {
-	stop();
-	var c = clone();
-
-	// ensure types.DefaultMap is not impacted by
-	// other map types that may have been loaded
-	c.import('can-types').then(function(types) {
-		c.import('./can-simple-map').then(function(SimpleMap) {
-			var map = new types.DefaultMap();
-			QUnit.ok(map instanceof SimpleMap);
-			start();
-		});
-	});
+QUnit.test("sets constructor name", function(assert) {
+	var map = new SimpleMap();
+	assert.equal(map.constructor.name, "SimpleMap");
 });
 
 QUnit.test("instantiates and gets events", 2, function() {
@@ -35,11 +26,13 @@ QUnit.test("instantiates and gets events", 2, function() {
 
 QUnit.test("trying to read constructor from refs scope is ok", function(){
 	var map = new SimpleMap();
-	var construct = compute(function(){
+	var construct = new Observation(function(){
 		return map.attr("constructor");
 	});
-	construct.bind("change", function(){});
-	equal(construct(), SimpleMap);
+	canReflect.onValue(construct, function(){});
+
+
+	equal(canReflect.getValue(construct), SimpleMap);
 });
 
 QUnit.test("get set and serialize", function(){
@@ -65,18 +58,18 @@ QUnit.test("get set and serialize", function(){
 QUnit.test("serialize and get are observable",2, function(){
 
 	var map = new SimpleMap();
-	var c1 = compute(function(){
+	var c1 = new Observation(function(){
 		return map.serialize();
 	});
-	var c2 = compute(function(){
+	var c2 = new Observation(function(){
 		return map.get();
 	});
 
-	c1.on("change", function(ev, newValue){
+	canReflect.onValue(c1, function(newValue){
 		QUnit.deepEqual(newValue, {foo:"bar"}, "updated serialize");
 	});
 
-	c2.on("change", function(ev, newValue){
+	canReflect.onValue(c2, function(newValue){
 		QUnit.deepEqual(newValue, {foo:"bar"}, "updated get");
 	});
 
@@ -126,14 +119,14 @@ QUnit.test("can-reflect setKeyValue", function(){
 	QUnit.equal(a.attr("a"), "c", "setKeyValue");
 });
 
-QUnit.test("can-reflect getKeyDependencies", function() { 
+QUnit.test("can-reflect getKeyDependencies", function() {
 	var a = new SimpleMap({ "a": "a" });
 
 	ok(!canReflect.getKeyDependencies(a, "a"), "No dependencies before binding");
 
 });
 
-QUnit.test("registered symbols", function() { 
+QUnit.test("registered symbols", function() {
 	var a = new SimpleMap({ "a": "a" });
 
 	ok(a[canSymbol.for("can.isMapLike")], "can.isMapLike");
@@ -151,4 +144,104 @@ QUnit.test("registered symbols", function() {
 
 	a[canSymbol.for("can.offKeyValue")]("a", handler);
 	a.attr("a", "d"); // doesn't trigger handler
+});
+
+QUnit.test("initialization does not cause Observation.add", function(){
+	ObservationRecorder.start();
+	var m = new SimpleMap();
+	m = new SimpleMap({first: "second"});
+	var observationRecord = ObservationRecorder.stop();
+
+	QUnit.equal(observationRecord.keyDependencies.size , 0, "no key deps");
+	QUnit.equal(observationRecord.valueDependencies.size , 0, "no value deps");
+});
+
+QUnit.test("log all property changes", function(assert) {
+	var map = new SimpleMap();
+	var done = assert.async();
+
+	map.log();
+
+	var changed = [];
+	var log = dev.log;
+	dev.log = function() {
+		changed.push(JSON.parse(arguments[2]));
+	};
+
+	map.set("foo","bar");
+	map.set({zed: "ted"});
+
+	var deepMap = new SimpleMap({a: "b"});
+	map.set("deep", deepMap);
+
+	assert.expect(1);
+	setTimeout(function() {
+		dev.log = log;
+		assert.deepEqual(changed, ["foo", "zed", "deep"], "should log all properties");
+		done();
+	});
+});
+
+QUnit.test("log single property changes", function(assert) {
+	var map = new SimpleMap();
+	var done = assert.async();
+
+	map.log("foo");
+
+	var changed = [];
+	var log = dev.log;
+	dev.log = function() {
+		changed.push(JSON.parse(arguments[2]));
+	};
+
+	map.set("foo", "bar");
+	map.set("bar", "bar");
+	map.set("baz", "baz");
+
+	assert.expect(1);
+	setTimeout(function() {
+		dev.log = log;
+		assert.deepEqual(changed, ["foo"], "should only log 'foo' changes");
+		done();
+	});
+});
+
+QUnit.test("log multiple property changes", function(assert) {
+	var map = new SimpleMap();
+	var done = assert.async();
+
+	map.log("foo");
+	map.log("qux");
+
+	var changed = [];
+	var log = dev.log;
+	dev.log = function() {
+		changed.push(JSON.parse(arguments[2]));
+	};
+
+	map.set("foo", "foo");
+	map.set("bar", "bar");
+	map.set("baz", "baz");
+	map.set("qux", "qux");
+
+	assert.expect(1);
+	setTimeout(function() {
+		dev.log = log;
+		assert.deepEqual(changed, ["foo", "qux"], "should log onlt foo and qux");
+		done();
+	});
+});
+
+QUnit.test("don't dispatch events for sets that don't change", 2, function(){
+	var map = new SimpleMap({foo: "bar"});
+	canReflect.onKeyValue(map, "foo", function(newVal, oldVal){
+		QUnit.equal(newVal, "BAR");
+		QUnit.equal(oldVal,"bar");
+	});
+	map.attr("foo","bar");
+	map.attr("foo","BAR");
+});
+
+require("can-reflect-tests/observables/map-like/instance/on-get-set-delete-key")("", function(){
+	return new SimpleMap();
 });

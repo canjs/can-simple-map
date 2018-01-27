@@ -1,8 +1,8 @@
 {
   "name": "can-simple-map",
-  "version": "3.3.2",
+  "version": "4.0.0-pre.15",
   "description": "A performant live-bound map",
-  "homepage": "https://canjs.com",
+  "homepage": "https://canjs.com/doc/can-simple-map.html",
   "repository": {
     "type": "git",
     "url": "git://github.com/canjs/can-simple-map.git"
@@ -13,9 +13,8 @@
     "url": "http://bitovi.com"
   },
   "scripts": {
-    "preversion": "npm test && npm run build",
-    "version": "git commit -am \"Update dist for release\" && git checkout -b release && git add -f dist/",
-    "postversion": "git push --tags && git checkout master && git branch -D release && git push",
+    "preversion": "npm test",
+    "postpublish": "git push --tags && git push",
     "testee": "testee test/test.html --browsers firefox",
     "test": "npm run detect-cycle && npm run jshint && npm run testee",
     "jshint": "jshint ./*.js --config",
@@ -42,18 +41,20 @@
     ]
   },
   "dependencies": {
-    "can-cid": "^1.0.3",
     "can-construct": "^3.2.0",
-    "can-event": "^3.6.0",
-    "can-observation": "^3.3.1",
+    "can-event-queue": "^1.0.0",
+    "can-key-tree": "^1.0.0",
+    "can-log": "^1.0.0",
+    "can-observation": "^4.0.0",
+    "can-observation-recorder": "^1.0.0",
+    "can-queues": "^1.0.0",
     "can-reflect": "^1.2.1",
     "can-symbol": "^1.0.0",
-    "can-types": "^1.1.0",
     "can-util": "^3.9.0"
   },
   "devDependencies": {
-    "can-compute": "^3.3.1",
     "detect-cyclic-packages": "^1.1.0",
+    "can-reflect-tests": "<2.0.0",
     "jshint": "^2.9.1",
     "steal": "^1.2.9",
     "steal-qunit": "^1.0.1",
