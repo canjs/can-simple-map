@@ -42,12 +42,12 @@
   },
   "dependencies": {
     "can-construct": "^3.2.0",
-    "can-event-queue": "<2.0.0",
-    "can-key-tree": "<2.0.0",
-    "can-log": "^0.1.0",
-    "can-observation": "^4.0.0-pre.0",
-    "can-observation-recorder": "<2.0.0",
-    "can-queues": "<2.0.0",
+    "can-event-queue": "^1.0.0",
+    "can-key-tree": "^1.0.0",
+    "can-log": "^1.0.0",
+    "can-observation": "^4.0.0",
+    "can-observation-recorder": "^1.0.0",
+    "can-queues": "^1.0.0",
     "can-reflect": "^1.2.1",
     "can-symbol": "^1.0.0",
     "can-util": "^3.9.0"
