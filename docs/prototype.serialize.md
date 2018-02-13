@@ -8,8 +8,8 @@
 Returns the serialized form of the simple-map, with any values in the map that
 have a serialize method also having serialized called.
 
-```js
-var map = new SimpleMap();
+```javascript
+const map = new SimpleMap();
 map.set("deep", new SimpleMap({a: "b"}));
 
 map.serialize() //->  {deep: {a: "b"}}
