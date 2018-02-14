@@ -10,9 +10,9 @@ have a serialize method also having serialized called.
 
 ```js
 const map = new SimpleMap();
-map.set("deep", new SimpleMap({a: "b"}));
+map.set( "deep", new SimpleMap( { a: "b" } ) );
 
-map.serialize() //->  {deep: {a: "b"}}
+map.serialize(); //->  {deep: {a: "b"}}
 ```
 
 @return {Object} A plain JavaScript object that will only contain
