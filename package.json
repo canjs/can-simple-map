@@ -1,6 +1,6 @@
 {
   "name": "can-simple-map",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "A performant live-bound map",
   "homepage": "https://canjs.com/doc/can-simple-map.html",
   "repository": {
