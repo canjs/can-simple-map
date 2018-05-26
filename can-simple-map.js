@@ -1,7 +1,6 @@
 var Construct = require("can-construct");
 var eventQueue = require("can-event-queue/map/map");
 var queues = require("can-queues");
-var each = require("can-util/js/each/each");
 var ObservationRecorder = require("can-observation-recorder");
 var canReflect = require("can-reflect");
 var dev = require("can-log/dev/dev");
@@ -40,7 +39,7 @@ var SimpleMap = Construct.extend("SimpleMap",
 			if(arguments.length === 0 ) {
 				ObservationRecorder.add(this,"can.keys");
 				var data = {};
-				each(this._data, function(value, prop){
+				canReflect.eachKey(this._data, function(value, prop){
 					ObservationRecorder.add(this, prop);
 					data[prop] = value;
 				}, this);

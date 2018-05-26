@@ -49,8 +49,7 @@
     "can-observation-recorder": "^1.0.0",
     "can-queues": "^1.0.0",
     "can-reflect": "^1.2.1",
-    "can-symbol": "^1.0.0",
-    "can-util": "^3.9.0"
+    "can-symbol": "^1.0.0"
   },
   "devDependencies": {
     "detect-cyclic-packages": "^1.1.0",
