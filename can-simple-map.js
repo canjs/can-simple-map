@@ -53,18 +53,28 @@ var SimpleMap = Construct.extend("SimpleMap",
 
 
 					//!steal-remove-start
-					if (typeof this._log === "function") {
-						this._log(prop, value, old);
+					if (process.env.NODE_ENV !== 'production') {
+						if (typeof this._log === "function") {
+							this._log(prop, value, old);
+						}
+					}
+					//!steal-remove-end
+					
+					var dispatched = {
+						keyChanged: !had ? prop : undefined,
+						type: prop
+					};
+					//!steal-remove-start
+					if (process.env.NODE_ENV !== 'production') {
+						dispatched = {
+							keyChanged: !had ? prop : undefined,
+							type: prop,
+							reasonLog: [ canReflect.getName(this) + "'s", prop, "changed to", value, "from", old ],
+						};
 					}
 					//!steal-remove-end
 
-					this.dispatch({
-						keyChanged: !had ? prop : undefined,
-						type: prop,
-						//!steal-remove-start
-						reasonLog: [ canReflect.getName(this) + "'s", prop, "changed to", value, "from", old ],
-						//!steal-remove-end
-					}, [value, old]);
+					this.dispatch(dispatched, [value, old]);
 				}
 
 			}
@@ -98,10 +108,11 @@ var SimpleMap = Construct.extend("SimpleMap",
 		// pass a single property to only get logs for said property, e.g: `.log("foo")`
 		log: function(key) {
 			//!steal-remove-start
-			var quoteString = function quoteString(x) {
-				return typeof x === "string" ? JSON.stringify(x) : x;
-			};
-
+			if (process.env.NODE_ENV !== 'production') {
+				var quoteString = function quoteString(x) {
+					return typeof x === "string" ? JSON.stringify(x) : x;
+				};
+			}
 			var meta = ensureMeta(this);
 			meta.allowedLogKeysSet = meta.allowedLogKeysSet || new Set();
 
@@ -127,7 +138,7 @@ var SimpleMap = Construct.extend("SimpleMap",
 
 eventQueue(SimpleMap.prototype);
 
-canReflect.assignSymbols(SimpleMap.prototype,{
+var simpleMapProto = {
 	// -type-
 	"can.isMapLike": true,
 	"can.isListLike": false,
@@ -137,22 +148,32 @@ canReflect.assignSymbols(SimpleMap.prototype,{
 	"can.getKeyValue": SimpleMap.prototype.get,
 	"can.setKeyValue": SimpleMap.prototype.set,
 	"can.deleteKeyValue": function(prop) {
+		var dispatched;
 		if( this._data.hasOwnProperty(prop) ) {
 			var old = this._data[prop];
 			delete this._data[prop];
 
 			//!steal-remove-start
-			if (typeof this._log === "function") {
-				this._log(prop, undefined, old);
+			if (process.env.NODE_ENV !== 'production') {
+				if (typeof this._log === "function") {
+					this._log(prop, undefined, old);
+				}
 			}
 			//!steal-remove-end
-			this.dispatch({
+			dispatched = {
 				keyChanged: prop,
-				type: prop,
-				//!steal-remove-start
-				reasonLog: [ canReflect.getName(this) + "'s", prop, "deleted", old ],
-				//!steal-remove-end
-			}, [undefined, old]);
+				type: prop
+			};
+			//!steal-remove-start
+			if (process.env.NODE_ENV !== 'production') {
+				dispatched = {
+					keyChanged: prop,
+					type: prop,
+					reasonLog: [ canReflect.getName(this) + "'s", prop, "deleted", old ]
+				};
+			}
+			//!steal-remove-end
+			this.dispatch(dispatched, [undefined, old]);
 		}
 	},
 
@@ -181,14 +202,17 @@ canReflect.assignSymbols(SimpleMap.prototype,{
 	},
 	"can.getKeyDependencies": function(key) {
 		return undefined;
-	},
+	}	
+};
 
-	//!steal-remove-start
-	"can.getName": function() {
+//!steal-remove-start
+if (process.env.NODE_ENV !== 'production') {
+	simpleMapProto[canSymbol.for("can.getName")] = function() {
 		return canReflect.getName(this.constructor) + "{}";
-	},
-	//!steal-remove-end
-});
+	};
+}
+//!steal-remove-end
+canReflect.assignSymbols(SimpleMap.prototype,simpleMapProto);
 
 // Setup other symbols
 
