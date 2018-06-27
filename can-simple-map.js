@@ -207,7 +207,7 @@ var simpleMapProto = {
 
 //!steal-remove-start
 if (process.env.NODE_ENV !== 'production') {
-	simpleMapProto[canSymbol.for("can.getName")] = function() {
+	simpleMapProto["can.getName"] = function() {
 		return canReflect.getName(this.constructor) + "{}";
 	};
 }
