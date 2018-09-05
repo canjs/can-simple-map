@@ -242,6 +242,15 @@ QUnit.test("don't dispatch events for sets that don't change", 2, function(){
 	map.attr("foo","BAR");
 });
 
+QUnit.test("Reflect.hasOwnKey", function(){
+	var map = new SimpleMap({a: undefined, b: null, c: ""});
+
+	QUnit.ok( canReflect.hasOwnKey(map,"a"), "undefined is a key");
+	QUnit.ok( canReflect.hasOwnKey(map,"b"), "null is a key");
+	QUnit.ok( canReflect.hasOwnKey(map,"c"), "empty string is a key");
+	QUnit.ok( !canReflect.hasOwnKey(map,"d"), "no prop is not a key");
+});
+
 require("can-reflect-tests/observables/map-like/instance/on-get-set-delete-key")("", function(){
 	return new SimpleMap();
 });
