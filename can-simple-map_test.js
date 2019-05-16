@@ -13,7 +13,8 @@ QUnit.test("sets constructor name", function(assert) {
 	assert.equal(map.constructor.name, "SimpleMap");
 });
 
-QUnit.test("instantiates and gets events", 2, function(assert) {
+QUnit.test("instantiates and gets events", function(assert) {
+	assert.expect(2);
 	var map = new SimpleMap({ age: 29 });
 
 	map.on('age', function(ev, newVal, oldVal) {
@@ -55,7 +56,8 @@ QUnit.test("get set and serialize", function(assert) {
 	assert.deepEqual(map.serialize(), {foo: "bar", zed: "ted", deep: {a: "b"}});
 });
 
-QUnit.test("serialize and get are observable",2, function(assert) {
+QUnit.test("serialize and get are observable", function(assert) {
+	assert.expect(2);
 
 	var map = new SimpleMap();
 	var c1 = new Observation(function(){
@@ -77,7 +79,8 @@ QUnit.test("serialize and get are observable",2, function(assert) {
 
 });
 
-QUnit.test("works with can-reflect", 8, function(assert) {
+QUnit.test("works with can-reflect", function(assert) {
+	assert.expect(8);
 	var b = new SimpleMap({ "foo": "bar" });
 	// var c = new (SimpleMap.extend({
 	// 	"baz": canCompute(function(){
@@ -232,7 +235,8 @@ QUnit.test("log multiple property changes", function(assert) {
 	});
 });
 
-QUnit.test("don't dispatch events for sets that don't change", 2, function(assert) {
+QUnit.test("don't dispatch events for sets that don't change", function(assert) {
+	assert.expect(2);
 	var map = new SimpleMap({foo: "bar"});
 	canReflect.onKeyValue(map, "foo", function(newVal, oldVal){
 		assert.equal(newVal, "BAR");
