@@ -41,7 +41,7 @@
     ]
   },
   "dependencies": {
-    "can-construct": "^3.5.4",
+    "can-construct": "3.5.5",
     "can-event-queue": "^1.0.0",
     "can-key-tree": "^1.0.0",
     "can-log": "^1.0.0",
