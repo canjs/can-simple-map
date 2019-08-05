@@ -45,7 +45,7 @@
     "can-event-queue": "^1.0.0",
     "can-key-tree": "^1.0.0",
     "can-log": "^1.0.0",
-    "can-observation": "^4.0.0",
+    "can-observation": "^4.2.0",
     "can-observation-recorder": "^1.0.0",
     "can-queues": "^1.0.0",
     "can-reflect": "^1.2.1",
