@@ -1,6 +1,6 @@
 {
   "name": "can-simple-map",
-  "version": "4.2.0",
+  "version": "4.3.2",
   "description": "A performant live-bound map",
   "homepage": "https://canjs.com/doc/can-simple-map.html",
   "repository": {
@@ -41,7 +41,7 @@
     ]
   },
   "dependencies": {
-    "can-construct": "^3.2.0",
+    "can-construct": "^3.5.4",
     "can-event-queue": "^1.0.0",
     "can-key-tree": "^1.0.0",
     "can-log": "^1.0.0",
@@ -53,11 +53,11 @@
   },
   "devDependencies": {
     "detect-cyclic-packages": "^1.1.0",
-    "can-reflect-tests": "<2.0.0",
+    "can-reflect-tests": "^1.0.0",
     "jshint": "^2.9.1",
     "steal": "^2.0.0",
-    "steal-qunit": "^1.0.1",
-    "steal-tools": "^1.1.2",
-    "testee": "^0.8.0"
+    "steal-qunit": "^2.0.0",
+    "steal-tools": "^2.0.0",
+    "testee": "^0.9.0"
   }
 }

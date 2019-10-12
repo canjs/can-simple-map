@@ -60,7 +60,7 @@ var SimpleMap = Construct.extend("SimpleMap",
 						}
 					}
 					//!steal-remove-end
-					
+
 					var dispatched = {
 						keyChanged: !had ? prop : undefined,
 						type: prop
@@ -203,7 +203,10 @@ var simpleMapProto = {
 	},
 	"can.getKeyDependencies": function(key) {
 		return undefined;
-	}	
+	},
+	"can.hasOwnKey": function(key){
+		return this._data.hasOwnProperty(key);
+	}
 };
 
 //!steal-remove-start
