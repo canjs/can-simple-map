@@ -113,25 +113,25 @@ var SimpleMap = Construct.extend("SimpleMap",
 				var quoteString = function quoteString(x) {
 					return typeof x === "string" ? JSON.stringify(x) : x;
 				};
-			}
-			var meta = ensureMeta(this);
-			meta.allowedLogKeysSet = meta.allowedLogKeysSet || new Set();
+				var meta = ensureMeta(this);
+				meta.allowedLogKeysSet = meta.allowedLogKeysSet || new Set();
 
-			if (key) {
-				meta.allowedLogKeysSet.add(key);
-			}
-
-			this._log = function(prop, current, previous, log) {
-				if (key && !meta.allowedLogKeysSet.has(prop)) {
-					return;
+				if (key) {
+					meta.allowedLogKeysSet.add(key);
 				}
-				dev.log(
-					canReflect.getName(this),
-					"\n key ", quoteString(prop),
-					"\n is  ", quoteString(current),
-					"\n was ", quoteString(previous)
-				);
-			};
+
+				this._log = function(prop, current, previous, log) {
+					if (key && !meta.allowedLogKeysSet.has(prop)) {
+						return;
+					}
+					dev.log(
+						canReflect.getName(this),
+						"\n key ", quoteString(prop),
+						"\n is  ", quoteString(current),
+						"\n was ", quoteString(previous)
+					);
+				};
+			}
 			//!steal-remove-end
 		}
 	}
